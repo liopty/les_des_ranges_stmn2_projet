@@ -149,11 +149,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION topJeuxEmpruntes(nb INTEGER)
+CREATE OR REPLACE FUNCTION topJeuxEmpruntes(nb BIGINT)
     RETURNS TABLE
             (
                 nom        VARCHAR,
-                nb_emprunt INTEGER
+                nb_emprunt BIGINT
             )
 as
 $$
@@ -292,7 +292,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER checkInsertOrUpdateVente
+CREATE TRIGGER trigger_checkInsertOrUpdateVente
     BEFORE INSERT OR UPDATE
     ON VENTE
     FOR EACH ROW
@@ -306,10 +306,10 @@ BEGIN
     IF NEW.uuidConsommables IS NULL THEN
         RAISE EXCEPTION 'uuidConsommables ne peut pas être NULL';
     END IF;
-    IF (NEW.prix_unitaire IS NULL) OR (NEW.prix_unitaire < 0 ) THEN
+    IF (NEW.prix_unitaire IS NULL) OR (NEW.prix_unitaire < 0) THEN
         RAISE EXCEPTION 'prix_unitaire ne peut pas être NULL et doit être >= 0';
     END IF;
-    IF (NEW.qte IS NULL) OR (NEW.qte < 0 ) THEN
+    IF (NEW.qte IS NULL) OR (NEW.qte < 0) THEN
         RAISE EXCEPTION 'qte ne peut pas être NULL et doit être >= 0';
     END IF;
     IF NEW.date_creation IS NULL THEN
@@ -322,7 +322,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER checkInsertOrUpdateConsommables
+CREATE TRIGGER trigger_checkInsertOrUpdateConsommables
     BEFORE INSERT OR UPDATE
     ON CONSOMMABLES
     FOR EACH ROW
@@ -333,7 +333,7 @@ EXECUTE PROCEDURE checkInsertOrUpdateConsommables();
 CREATE OR REPLACE PROCEDURE checkInsertOrUpdateVenteConsommables() as
 $$
 BEGIN
-    IF (NEW.qte IS NULL) OR (NEW.qte < 0 ) THEN
+    IF (NEW.qte IS NULL) OR (NEW.qte < 0) THEN
         RAISE EXCEPTION 'qte ne peut pas être NULL et doit être >= 0';
     END IF;
     IF NEW.date_creation IS NULL THEN
@@ -346,8 +346,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER checkInsertOrUpdateVenteConsommables
+CREATE TRIGGER trigger_checkInsertOrUpdateVenteConsommables
     BEFORE INSERT OR UPDATE
     ON VENTE_CONSOMMABLES
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateVenteConsommables();
+
+--
+
