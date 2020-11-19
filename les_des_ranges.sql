@@ -99,7 +99,7 @@ CREATE TABLE VENTE
     prix_total        NUMERIC(6, 2) NOT NULL,
     date_creation     TIMESTAMP     NOT NULL,
     date_modification TIMESTAMP     NULL,
-    CONSTRAINT fk_VENTE_ADHERENT FOREIGN KEY (uuidAdherent) REFERENCES ADHERENT (uuidAdherent),
+    CONSTRAINT fk_VENTE_ADHERENT FOREIGN KEY (uuidAdherent) REFERENCES ADHERENT (uuidAdherent)
 );
 
 CREATE TABLE VENTE_CONSOMMABLES
@@ -113,7 +113,7 @@ CREATE TABLE VENTE_CONSOMMABLES
 );
 
 ----------------------------------------------FONCTIONS----------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION calculateSold(idvente VARCHAR) RETURNS NUMERIC(6, 2) AS
+CREATE OR REPLACE FUNCTION calculateSold("idvente" VARCHAR) RETURNS NUMERIC(6, 2) AS
 $$
 DECLARE
     total NUMERIC(6, 2);
@@ -137,35 +137,23 @@ $$
 DECLARE
     r INTEGER;
 BEGIN
-    for r in SELECT DISTINCT qte
-             FROM VENTE v
-                      join CONSOMMABLES c on v.uuidConsommables = c.uuidConsommables
+    for r in SELECT DISTINCT c.qte - vc.qte
+             FROM VENTE_CONSOMMABLES vc
+                      join CONSOMMABLES c on vc.uuidConsommables = c.uuidConsommables
              WHERE uuidVente = $1
         LOOP
-            IF r <= 0 THEN
+            IF r < 0 THEN
                 RETURN FALSE;
             END IF;
         END LOOP;
+    RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION topJeuxEmpruntes(nb BIGINT)
-    RETURNS TABLE
-            (
-                nom        VARCHAR,
-                nb_emprunt BIGINT
-            )
-as
-$$
+CREATE OR REPLACE FUNCTION topJeuxEmpruntes(nb INTEGER) RETURNS TABLE (nom VARCHAR, nb_emprunt BIGINT) as $$
 BEGIN
     return query
-        SELECT *
-        FROM (SELECT COUNT(j.nom) as nb_emprunt, j.nom
-              FROM jeux j
-                       JOIN emprunt e ON j.uuidJeux = e.uuidJeux
-              GROUP BY j.nom) as table1
-        ORDER BY nb_emprunt DESC
-        LIMIT $1;
+        SELECT * FROM (SELECT  j.nom , COUNT(j.nom) as nb_emprunt FROM jeux j  JOIN emprunt e ON j.uuidJeux = e.uuidJeux GROUP BY j.nom ) AS x ORDER BY nb_emprunt DESC LIMIT $1;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -353,4 +341,39 @@ CREATE TRIGGER trigger_checkInsertOrUpdateVenteConsommables
 EXECUTE PROCEDURE checkInsertOrUpdateVenteConsommables();
 
 --
+
+--------------------------------JEUX DE TEST--------------------------------------------------
+INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('1','coca',1.5,10,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('2','chips',1.0,30,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('3','cafe',2,3,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+
+INSERT INTO ADHERENT(uuidAdherent, nom, prenom, date_naissance, mail, date_premiere_cotisation, date_derniere_cotisation, telephone, type_adhesion, personnes_rattachees, autre, date_creation, date_modification) VALUES ('1','MARCHAL','Bob','1999-06-22','bob@gmail.com','2005-06-22','2015-06-22',null,'Journée',null,null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO ADHERENT(uuidAdherent, nom, prenom, date_naissance, mail, date_premiere_cotisation, date_derniere_cotisation, telephone, type_adhesion, personnes_rattachees, autre, date_creation, date_modification) VALUES ('2','HENRIQUES','Paul','1998-06-22','paul@gmail.com','2005-06-22','2015-06-22',null,'Journée',null,null,'2017-06-22 19:10:25-07','2017-06-22 19:10:25-07');
+INSERT INTO ADHERENT(uuidAdherent, nom, prenom, date_naissance, mail, date_premiere_cotisation, date_derniere_cotisation, telephone, type_adhesion, personnes_rattachees, autre, date_creation, date_modification) VALUES ('3','NAJULI','Elina','1997-06-22','elina@gmail.com','2005-06-22','2015-06-22',null,'Journée',null,null,'2018-06-22 19:10:25-07','2018-06-22 19:10:25-07');
+
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('1','UNO','1','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('2','Monopoly','2','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('3','Echec','3','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('4','Les trois petits cochons','4','3-6ans','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('5','Croque carrote','5','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+
+INSERT INTO VENTE(uuidVente, uuidAdherent, prix_total, date_creation, date_modification) VALUES ('1','1',0,'2020-11-19','2020-11-19');
+INSERT INTO VENTE(uuidVente, uuidAdherent, prix_total, date_creation, date_modification) VALUES ('2','1',0,'2020-11-19','2020-11-19');
+
+INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','1','3');
+INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','2','1');
+
+INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('2','3','4');
+
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('1','1','3','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('2','1','3','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('3','2','1','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('4','2','5','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('5','3','3','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('6','3','5','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+
+-- select calculateSold(Cast(1 as VarChar)); RETURN 5.5
+-- select canSold(Cast(1 as VarChar)); RETURN TRUE
+-- select canSold(Cast(2 as VarChar)); RETURN FALSE
+-- select topJeuxEmpruntes(4); RETURN ECHEC 3 : CROQUE CARROTE 2 ; UNO 1
 
