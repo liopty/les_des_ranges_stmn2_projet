@@ -11,6 +11,14 @@ class AdherentDAO
     }
 
     public static function insert( $val = []){
-        DB::insert("adherent",$val);
+        return DB::insert("adherent",$val);
+    }
+
+    public static function update( $val = [], $id = []){
+        return DB::update("adherent",$val,$id);
+    }
+
+    public static function delete($param = []){
+        return DB::delete("adherent",$param);
     }
 }

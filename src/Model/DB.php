@@ -20,7 +20,7 @@ class DB
     private static $dbname = "les_des_ranges"; // nom de la base de données
 
     private static $bddStructure = [
-        "adherent"=> ["uuidAdherent","nom","prenom","date_naissance","mail","date_premiere_cotisation","date_derniere_cotisation","telephone","type_adhesion","personnes_rattachees","autre","date_creation","date_modification"],
+        "adherent" => ["uuidAdherent", "nom", "prenom", "date_naissance", "mail", "date_premiere_cotisation", "date_derniere_cotisation", "telephone", "type_adhesion", "personnes_rattachees", "autre", "date_creation", "date_modification"],
     ];
 
     ////////////////////////////////////////////////////////////////////////////
@@ -38,11 +38,11 @@ class DB
         return self::$instance;
     }
 
-    public static function findAll( $table = "error", $orderby = "uuid ASC")
+    public static function findAll($table = "error", $orderby = "uuid ASC")
     {
         $table = strtolower($table);
 
-        if(!array_key_exists($table,DB::$bddStructure)) return null;
+        if (!array_key_exists($table, DB::$bddStructure)) return null;
 
         $req = DB::getInstance()->prepare("SELECT * FROM " . $table . " ORDER BY :orderby ;");
         try {
@@ -57,35 +57,137 @@ class DB
         }
     }
 
-    public static function insert($table, $val = []){
+    public static function insert($table, $val = [])
+    {
         $bddStruct = DB::$bddStructure;
         $table = strtolower($table);
-        $paramlength = count($val);
-        if(!array_key_exists($table,$bddStruct) || $paramlength != count($bddStruct[$table])) return null;
+        if (!array_key_exists($table, $bddStruct)) return null;
 
         try {
+            $paramlength = count($bddStruct[$table]);
 
             $attr = "";
             $param = "";
-            for ($i = 0; $i < $paramlength; $i++){
-                $attr .= $bddStruct[$table][$i].",";
-                $param .= "?,";
-            }
-            $attr = substr($attr, 0, -1);
-            $param = substr($param, 0, -1);
-            $req = DB::getInstance()->prepare("INSERT INTO ".$table." (".$attr.") VALUES (".$param.");");
-            for ($i = 0; $i < $paramlength; $i++){
-                $req->bindParam($i+1,$val[$i]);
-            }
-            $req->execute();
+            $orderedValArray = [];
 
-            return "Success";
+            for ($i = 0; $i < $paramlength; $i++) {
+                if (array_key_exists($bddStruct[$table][$i], $val)) {
+                    $attr .= $bddStruct[$table][$i] . ",";
+                    $param .= "?,";
+                    $orderedValArray[] = $val[$bddStruct[$table][$i]];
+                }
+            }
+            $nbParam = count($orderedValArray);
 
-        }catch (PDOException $erreur) {
+
+            if ($nbParam > 0) {
+                $attr = substr($attr, 0, -1);
+                $param = substr($param, 0, -1);
+
+                $req = DB::getInstance()->prepare("INSERT INTO " . $table . " (" . $attr . ") VALUES (" . $param . ");");
+                for ($i = 0; $i < $nbParam; $i++) {
+                    $req->bindParam($i + 1, $orderedValArray[$i]);
+                }
+                return $req->execute();
+
+            }
+
+            return null;
+
+        } catch (PDOException $erreur) {
             return null;
             //DEBUG return "Erreur " . $erreur->getMessage();
         }
+    }
 
+    public static function update($table, $val = [], $id = [])
+    {
+        $bddStruct = DB::$bddStructure;
+        $table = strtolower($table);
+        if (!array_key_exists($table, $bddStruct)) return null;
+
+        try {
+            $paramlength = count($bddStruct[$table]);
+
+            $attr = "";
+            $orderedValArray = [];
+
+            $idAttr = "";
+            $orderedIdArray = [];
+
+            for ($i = 0; $i < $paramlength; $i++) {
+                if (array_key_exists($bddStruct[$table][$i], $val)) {
+                    $attr .= $bddStruct[$table][$i] . " = ?,";
+                    $orderedValArray[] = $val[$bddStruct[$table][$i]];
+                }
+                if (array_key_exists($bddStruct[$table][$i], $id)) {
+                    $idAttr .= $bddStruct[$table][$i] . " = ? AND ";
+                    $orderedIdArray[] = $id[$bddStruct[$table][$i]];
+                }
+            }
+
+            $nbParam = count($orderedValArray);
+            $nbid = count($orderedIdArray);
+
+            if ($nbParam > 0 && $nbid > 0) {
+                $attr = substr($attr, 0, -1);
+                $idAttr = substr($idAttr, 0, -5);
+                $req = DB::getInstance()->prepare("UPDATE " . $table . " SET " . $attr . " WHERE " . $idAttr . ";");
+                $j = 0;
+                for ($i = 0; $i < $nbParam; $i++) {
+                    $j++;
+                    $req->bindParam($j, $orderedValArray[$i]);
+                }
+                for ($i = 0; $i < $nbid; $i++) {
+                    $j++;
+                    $req->bindParam($j, $orderedIdArray[$i]);
+                }
+                return $req->execute();
+
+            }
+            return null;
+
+
+        } catch (PDOException $erreur) {
+            //return null;
+            return "Erreur " . $erreur->getMessage();
+        }
+    }
+
+    public static function delete($table, $param = [])
+    {
+        $bddStruct = DB::$bddStructure;
+        $table = strtolower($table);
+        if (!array_key_exists($table, $bddStruct)) return null;
+
+        try {
+            $paramAttr = "";
+            $orderedParamArray = [];
+
+            foreach ($param as $key => $val){
+                if (in_array($key,$bddStruct[$table])) {
+                    $paramAttr .= $key . " = ? AND ";
+                    $orderedParamArray[] = $val;
+                }
+            }
+
+            $nbParam = count($orderedParamArray);
+            if ($nbParam > 0 ) {
+                $paramAttr = substr($paramAttr, 0, -5);
+                $req = DB::getInstance()->prepare("DELETE FROM " . $table . " WHERE " . $paramAttr . ";");
+
+                for ($i = 0; $i < $nbParam; $i++) {
+                    $req->bindParam($i+1, $orderedParamArray[$i]);
+                }
+                return $req->execute();
+
+            }
+            return null;
+
+        } catch (PDOException $erreur) {
+            //return null;
+            return "Erreur " . $erreur->getMessage();
+        }
     }
 
     public static function disconnect()

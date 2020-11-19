@@ -18,16 +18,16 @@
                         <table class="table table-striped" id="adherentsTable">
                             <thead>
                             <tr>
-                                <th>nom</th>
-                                <th>prenom</th>
-                                <th>date_naissance</th>
-                                <th>mail</th>
-                                <th>date_premiere_cotisation</th>
-                                <th>date_derniere_cotisation</th>
-                                <th>telephone</th>
-                                <th>type_adhesion</th>
-                                <th>personnes_rattachees</th>
-                                <th>autre</th>
+                                <th>Nom</th>
+                                <th>Prenom</th>
+                                <th>Date de naissance</th>
+                                <th>Mail</th>
+                                <th>Première cotisation</th>
+                                <th>Dernière cotisation</th>
+                                <th>Téléphone</th>
+                                <th>Adhésion</th>
+                                <th>Personnes rattachées</th>
+                                <th>Autre</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -46,6 +46,7 @@
 {% endblock %}
 
 {% block footer %}
+    <input type="hidden" id="adherentPage">
     <div class="modal fade" id="neworupdateadherentForm" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -147,6 +148,33 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
                         <button type="submit" class="btn btn-primary submitForm " data-formid="form_adherent">Enregistrer <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="adherentFormDelete" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUserTitle">Supprimer un adhérent</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ path('app_adherents') }}" id="deleteAdherentForm" method="post">
+
+                    <div class="modal-body">
+                        <p>Vous êtes sur le point de supprimer cet adhérent, cette action est irréversible.</p>
+                        <input id="formAdherentAction2" type="hidden" value="delete" name="adherentRequestType">
+                        <input id="idAdherent2" type="hidden" value="" name="idAdherent">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary submitForm"
+                                data-formid="deleteAdherentForm">Confirmer <span class="spinner-border spinner-border-sm"  role="status" aria-hidden="true" hidden="hidden"></span></button>
                     </div>
                 </form>
             </div>
