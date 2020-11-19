@@ -160,10 +160,10 @@ $$ LANGUAGE plpgsql;
 
 
 ---------------------------- TRIGGERS ---------------------------------------------
-CREATE OR REPLACE PROCEDURE checkinsertOrUpdateEmprunt() as
+CREATE OR REPLACE FUNCTION checkinsertOrUpdateEmprunt() RETURNS trigger AS
 $$
 BEGIN
-    IF NEW.nuuidEmprunt IS NULL THEN
+    IF NEW.uuidEmprunt IS NULL THEN
         RAISE EXCEPTION 'nuuidEmprunt ne peut pas être NULL';
     END IF;
     IF NEW.date_emprunt IS NULL THEN
@@ -192,7 +192,7 @@ EXECUTE PROCEDURE checkinsertOrUpdateEmprunt();
 
 ----
 
-CREATE OR REPLACE PROCEDURE checkInsertOrUpdateJeux() as
+CREATE OR REPLACE FUNCTION checkInsertOrUpdateJeux() RETURNS trigger AS
 $$
 BEGIN
     IF NEW.uuidJeux IS NULL THEN
@@ -228,7 +228,7 @@ EXECUTE PROCEDURE checkInsertOrUpdateJeux();
 
 -----
 
-CREATE OR REPLACE PROCEDURE checkInsertOrUpdateAdherent() as
+CREATE OR REPLACE FUNCTION checkInsertOrUpdateAdherent() RETURNS trigger AS
 $$
 BEGIN
     IF NEW.uuidAdherent IS NULL THEN
@@ -264,7 +264,7 @@ EXECUTE PROCEDURE checkInsertOrUpdateAdherent();
 
 ---
 
-CREATE OR REPLACE PROCEDURE checkInsertOrUpdateVente() as
+CREATE OR REPLACE FUNCTION checkInsertOrUpdateVente() RETURNS trigger AS
 $$
 BEGIN
     IF NEW.uuidVente IS NULL THEN
@@ -288,7 +288,7 @@ EXECUTE PROCEDURE checkInsertOrUpdateVente();
 
 ---
 
-CREATE OR REPLACE PROCEDURE checkInsertOrUpdateConsommables() as
+CREATE OR REPLACE FUNCTION checkInsertOrUpdateConsommables() RETURNS trigger AS
 $$
 BEGIN
     IF NEW.uuidConsommables IS NULL THEN
@@ -318,19 +318,12 @@ EXECUTE PROCEDURE checkInsertOrUpdateConsommables();
 
 ---
 
-CREATE OR REPLACE PROCEDURE checkInsertOrUpdateVenteConsommables() as
+CREATE OR REPLACE FUNCTION checkInsertOrUpdateVenteConsommables() RETURNS trigger AS
 $$
 BEGIN
     IF (NEW.qte IS NULL) OR (NEW.qte < 0) THEN
         RAISE EXCEPTION 'qte ne peut pas être NULL et doit être >= 0';
     END IF;
-    IF NEW.date_creation IS NULL THEN
-        RAISE EXCEPTION 'date_creation ne peut pas être NULL';
-    END IF;
-    IF NEW.date_modification IS NULL THEN
-        RAISE EXCEPTION 'date_modification ne peut pas être NULL';
-    END IF;
-
 END;
 $$ LANGUAGE plpgsql;
 
