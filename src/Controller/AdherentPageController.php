@@ -9,6 +9,7 @@ use App\Model\DB;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdherentPageController extends AbstractController
@@ -17,7 +18,7 @@ class AdherentPageController extends AbstractController
     /**
      * @Route("/adherents", name="app_adherents")
      * @param Request $req
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function adherents(Request $req)
     {

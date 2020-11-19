@@ -8,8 +8,23 @@
 
     <div class="collapse navbar-collapse" id="navbarNav2">
         <ul class="navbar-nav">
+            <li class="nav-item {% if current_menu == 'Accueil' %}active {% endif %}">
+                <a class="nav-link subMenu" href="{{ path('app_homaepage') }}" > Accueil </a>
+            </li>
             <li class="nav-item {% if current_menu == 'Adherents' %}active {% endif %}">
                 <a class="nav-link subMenu" href="{{ path('app_adherents') }}" > Adherents </a>
+            </li>
+            <li class="nav-item {% if current_menu == 'Jeux' %}active {% endif %}">
+                <a class="nav-link subMenu" href="{{ path('app_jeux') }}" > Jeux </a>
+            </li>
+            <li class="nav-item {% if current_menu == 'Stocks' %}active {% endif %}">
+                <a class="nav-link subMenu" href="{{ path('app_stocks') }}" > Stocks </a>
+            </li>
+            <li class="nav-item {% if current_menu == 'Emprunts' %}active {% endif %}">
+                <a class="nav-link subMenu" href="{{ path('app_emprunts') }}" > Emprunts </a>
+            </li>
+            <li class="nav-item {% if current_menu == 'Ventes' %}active {% endif %}">
+                <a class="nav-link subMenu" href="{{ path('app_ventes') }}" > Ventes </a>
             </li>
         </ul>
     </div>

@@ -15,8 +15,9 @@ class HomePageController extends AbstractController
     public function accueil()
     {
 
-        return $this->redirectToRoute("app_adherents");
-
+        return $this->render('homepage.html.twig', [
+            "current_menu" => "Accueil"
+        ]);
     }
 
 
