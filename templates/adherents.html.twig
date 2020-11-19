@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% include 'menu.html.twig' %}
+                <div class="row">
+                    <div class="col">
+                        <button id="openNewAdherentForm" class="btn btn-primary" data-toggle="modal"
+                                data-target="#neworupdateadherentForm">Nouveau  <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <table class="table table-striped" id="adherentsTable">
+                            <thead>
+                            <tr>
+                                <th>nom</th>
+                                <th>prenom</th>
+                                <th>date_naissance</th>
+                                <th>mail</th>
+                                <th>date_premiere_cotisation</th>
+                                <th>date_derniere_cotisation</th>
+                                <th>telephone</th>
+                                <th>type_adhesion</th>
+                                <th>personnes_rattachees</th>
+                                <th>autre</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ tbody|raw }}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    <div class="modal fade" id="neworupdateadherentForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAdherentTitle">Tmp</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form_adherent" action="{{ path('app_adherents') }}" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="adherentNom">Nom*</label>
+                                    <input type="text" id="adherentNom" name="nom" required="required"
+                                           maxlength="50" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="adherentPrenom">Prénom*</label>
+                                    <input type="text" id="adherentPrenom" name="prenom" required="required"
+                                           maxlength="50" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="adherentDateNaissance">Date de naissance</label>
+                                    <input type="date" class="form-control" name="datenaissance" id="adherentDateNaissance">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="adherentTel">Téléphone</label>
+                                    <input type="text" id="adherentTel" name="telephone"
+                                           maxlength="16" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="adherentMail">Adresse e-mail*</label>
+                                    <input type="email" id="adherentMail" name="mail"
+                                           class="form-control" maxlength="100" required="required">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="adherentDatePreCoti">Date de première cotisation*</label>
+                                    <input type="date" class="form-control" name="dateprecoti" id="adherentDatePreCoti" required="required">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="adherentDateDerCoti">Date de dernnière cotisation*</label>
+                                    <input type="date" class="form-control" name="datedercoti" id="adherentDateDerCoti" required="required">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="typeAdherent">Type d'adhesion*</label>
+                                    <select id="typeAdherent" name="adhesion" class="form-control" required="required">
+                                        <option value="Individuelle">Individuelle</option>
+                                        <option value="Familiale">Familiale</option>
+                                        <option value="Journée">Journée</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col" id="persRattaDiv" hidden="hidden">
+                                <div class="form-group">
+                                    <label for="persRattaAdherent">Personnes rattachées</label>
+                                    <textarea class="form-control" id="persRattaAdherent" name="personnesrattachees" maxlength="255"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="autreAdherent">Informations complémentaires</label>
+                                    <textarea class="form-control" id="autreAdherent" name="autre" maxlength="255"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <input id="formAdherentAction" type="hidden" value="" name="adherentRequestType">
+                        <input id="formAdherentId" type="hidden" value="" name="idAdherent">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary submitForm " data-formid="form_adherent">Enregistrer <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
