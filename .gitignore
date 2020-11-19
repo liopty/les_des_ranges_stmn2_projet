@@ -1,3 +1,5 @@
+.DS_Store
+.idea
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -15,3 +17,5 @@
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+/docker/data
