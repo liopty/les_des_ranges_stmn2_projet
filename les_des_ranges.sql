@@ -9,7 +9,7 @@ CREATE OR REPLACE PROCEDURAL LANGUAGE plpgsql;
 
 CREATE DOMAIN domain_categorie AS VARCHAR
     CHECK (
-            VALUE ~ '3-6ans'
+                VALUE ~ '3-6ans'
             OR VALUE ~ '6-8ans'
             OR VALUE ~ 'Famille'
             OR VALUE ~ 'Amateur'
@@ -20,7 +20,7 @@ CREATE DOMAIN domain_categorie AS VARCHAR
 
 CREATE DOMAIN domain_etat AS VARCHAR
     CHECK (
-            VALUE ~ 'Neuf'
+                VALUE ~ 'Neuf'
             OR VALUE ~ 'Très bon'
             OR VALUE ~ 'Pon'
             OR VALUE ~ 'Passable'
@@ -31,7 +31,7 @@ CREATE DOMAIN domain_etat AS VARCHAR
 
 CREATE DOMAIN domain_type_adhesion AS VARCHAR
     CHECK (
-            VALUE ~ 'Journée'
+                VALUE ~ 'Journée'
             OR VALUE ~ 'Individuelle'
             OR VALUE ~ 'Familiale'
         );
