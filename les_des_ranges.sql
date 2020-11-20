@@ -195,16 +195,24 @@ EXECUTE PROCEDURE checkinsertOrUpdateEmprunt();
 --- BEFORE INSERT / JEUX ADHERENT check contraintes d'integrite TESTER
 
 CREATE OR REPLACE FUNCTION checkInsertOrUpdateJeux() RETURNS trigger AS
-$$
+$$DECLARE requestType VARCHAR ;
 BEGIN
+    requestType = TG_ARGV[0];
     IF NEW.uuidJeux IS NULL THEN
         RAISE EXCEPTION 'uuidJeux ne peut pas être NULL';
     END IF;
     IF NEW.nom IS NULL THEN
         RAISE EXCEPTION 'nom ne peut pas être NULL';
     END IF;
-    IF EXISTS(SELECT 1 FROM jeux j WHERE NEW.code = j.code) OR (NEW.code IS NULL) THEN
-        RAISE EXCEPTION 'code doit être unique, il ne doit pas déjà être assigné à un autre jeu';
+
+    IF requestType = 'insert' THEN
+        IF EXISTS(SELECT 1 FROM jeux j WHERE NEW.code = j.code) OR (NEW.code IS NULL) THEN
+            RAISE EXCEPTION 'code doit être unique, il ne doit pas déjà être assigné à un autre jeu';
+        END IF;
+    ELSIF requestType = 'update' THEN
+        IF (EXISTS(SELECT 1 FROM jeux j WHERE NEW.code = j.code) AND OLD.code <> NEW.code) OR (NEW.code IS NULL) THEN
+            RAISE EXCEPTION 'code doit être unique, il ne doit pas déjà être assigné à un autre jeu';
+        END IF;
     END IF;
     IF NEW.isDisponible IS NULL THEN
         RAISE EXCEPTION 'isDisponible ne peut pas être NULL';
@@ -222,11 +230,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_checkInsertOrUpdateJeux
-    BEFORE INSERT OR UPDATE
+CREATE TRIGGER trigger_insert_checkInsertOrUpdateJeux
+    BEFORE INSERT
     ON jeux
     FOR EACH ROW
-EXECUTE PROCEDURE checkInsertOrUpdateJeux();
+EXECUTE PROCEDURE checkInsertOrUpdateJeux('insert');
+
+CREATE TRIGGER trigger_update_checkInsertOrUpdateJeux
+    BEFORE UPDATE
+    ON jeux
+    FOR EACH ROW
+EXECUTE PROCEDURE checkInsertOrUpdateJeux('update');
 
 --- BEFORE INSERT / UPDATE ADHERENT check contraintes d'integrite TESTER
 
@@ -451,4 +465,3 @@ UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE 1;
 -- select canSold(Cast(1 as VarChar)); RETURN TRUE
 -- select canSold(Cast(2 as VarChar)); RETURN FALSE
 -- select topJeuxEmpruntes(4); RETURN ECHEC 3 : CROQUE CARROTE 2 ; UNO 1
-

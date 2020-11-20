@@ -8,3 +8,4 @@
 5. Run `yarn encore dev` or `encore dev` *replace dev by prod once it's a working release*
 6. Run `docker-compose up`
 7. Open `https://localhost`
+8. Accept risks and continue (SSL certificate is missing)
