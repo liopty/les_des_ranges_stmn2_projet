@@ -230,13 +230,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_insert_checkInsertOrUpdateJeux
+CREATE TRIGGER trigger_checkInsertJeux
     BEFORE INSERT
     ON jeux
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateJeux('insert');
 
-CREATE TRIGGER trigger_update_checkInsertOrUpdateJeux
+CREATE TRIGGER trigger_checkUpdateJeux
     BEFORE UPDATE
     ON jeux
     FOR EACH ROW
