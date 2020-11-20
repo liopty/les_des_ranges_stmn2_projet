@@ -22,6 +22,7 @@ class DB
     private static $bddStructure = [
         "adherent" => ["uuidAdherent", "nom", "prenom", "date_naissance", "mail", "date_premiere_cotisation", "date_derniere_cotisation", "telephone", "type_adhesion", "personnes_rattachees", "autre", "date_creation", "date_modification"],
         "emprunt" => ["uuidEmprunt", "uuidJeux", "uuidAdherent", "date_emprunt", "date_retourprevu", "date_retour", "date_creation", "date_modification"],
+        "consommables" => ["uuidConsommables","label","prix_unitaire","qte","date_creation","date_modification"],
     ];
 
     ////////////////////////////////////////////////////////////////////////////

@@ -8,11 +8,36 @@
                 {% include 'menu.html.twig' %}
                 <br>
                 <div class="row">
-                    <div class="col">
-                        <p>Stocks</p>
+                    <div class="col" >
+                        <h3 class="display-4 text-center">Consommables proposés</h3>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col">
+                        <button id="openNewConsommablesForm" class="btn btn-primary" data-toggle="modal"
+                                data-target="#neworupdateconsommablesForm">Nouveau  <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col">
+                        <table class="table table-striped" id="consommablesTable">
+                            <thead>
+                            <tr>
+                                <th>label</th>
+                                <th>prix_unitaire</th>
+                                <th>qte</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ tbody|raw }}
+                            </tbody>
 
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -20,4 +45,82 @@
 {% endblock %}
 
 {% block footer %}
+    <!-- UPDATE -->
+    <input type="hidden" id="consommablesPage">
+    <div class="modal fade" id="neworupdateconsommablesForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConsommablesTitle">Administrer un consommable</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form_consommables" action="{{ path('app_stocks') }}" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="consommablesLabel">Label*</label>
+                                    <input type="text" id="consommablesLabel" name="label" required="required"
+                                           maxlength="50" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="consommablesPrix_unitaire">Prix unitaire*</label>
+                                    <input type="number" id="consommablesPrix_unitaire" name="prix_unitaire" required="required"
+                                           maxlength="50" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="consommablesQte">Quantité</label>
+                                    <input type="number" class="form-control" name="qte" id="consommablesQte">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <input id="formConsommablesAction" type="hidden" value="" name="consommablesRequestType">
+                        <input id="formConsommablesId" type="hidden" value="" name="uuidConsommables">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary submitForm " data-formid="form_consommables">Enregistrer <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- DELETE -->
+    <div class="modal fade" id="ConsommablesFormDelete" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUserTitle">Supprimer un consommable</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ path('app_stocks') }}" id="deleteConsommablesForm" method="post">
+
+                    <div class="modal-body">
+                        <p>Vous êtes sur le point de supprimer ce consommable, cette action est irréversible.</p>
+                        <input id="formConsommablesAction2" type="hidden" value="delete" name="adherentRequestType">
+                        <input id="idConsommables2" type="hidden" value="" name="uuidConsommables">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary submitForm"
+                                data-formid="deleteAdherentForm">Confirmer <span class="spinner-border spinner-border-sm"  role="status" aria-hidden="true" hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
