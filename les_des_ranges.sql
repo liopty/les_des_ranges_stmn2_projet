@@ -160,6 +160,7 @@ $$ LANGUAGE plpgsql;
 
 
 ---------------------------- TRIGGERS ---------------------------------------------
+--- BEFORE INSERT / JEUX EMPRUNT check contraintes d'integrite TESTER
 CREATE OR REPLACE FUNCTION checkinsertOrUpdateEmprunt() RETURNS trigger AS
 $$
 BEGIN
@@ -191,7 +192,7 @@ CREATE TRIGGER trigger_checkinsertOrUpdateEmprunt
     FOR EACH ROW
 EXECUTE PROCEDURE checkinsertOrUpdateEmprunt();
 
-----
+--- BEFORE INSERT / JEUX ADHERENT check contraintes d'integrite TESTER
 
 CREATE OR REPLACE FUNCTION checkInsertOrUpdateJeux() RETURNS trigger AS
 $$
@@ -227,7 +228,7 @@ CREATE TRIGGER trigger_checkInsertOrUpdateJeux
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateJeux();
 
------
+--- BEFORE INSERT / UPDATE ADHERENT check contraintes d'integrite TESTER
 
 CREATE OR REPLACE FUNCTION checkInsertOrUpdateAdherent() RETURNS trigger AS
 $$
@@ -263,7 +264,7 @@ CREATE TRIGGER trigger_checkInsertOrUpdateAdherent
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateAdherent();
 
----
+--- BEFORE INSERT / UPDATE VENTE check contraintes d'integrite TESTER
 
 CREATE OR REPLACE FUNCTION checkInsertOrUpdateVente() RETURNS trigger AS
 $$
@@ -287,7 +288,7 @@ CREATE TRIGGER trigger_checkInsertOrUpdateVente
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateVente();
 
---- BEFORE INSERT / UPDATE Consommables check contraintes d'integrite
+--- BEFORE INSERT / UPDATE Consommables check contraintes d'integrite TESTER
 
 CREATE OR REPLACE FUNCTION checkInsertOrUpdateConsommables() RETURNS trigger AS
 $$
@@ -317,7 +318,7 @@ CREATE TRIGGER trigger_checkInsertOrUpdateConsommables
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateConsommables();
 
---- CHECK BEFORE INSERT / UPDATE VENTE_CONSOMMABLES -> qte > 0
+--- CHECK BEFORE INSERT / UPDATE VENTE_CONSOMMABLES -> qte > 0 TESTER
 
 CREATE OR REPLACE FUNCTION checkInsertOrUpdateVenteConsommables() RETURNS trigger AS
 $$
@@ -335,7 +336,7 @@ CREATE TRIGGER trigger_checkInsertOrUpdateVenteConsommables
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateVenteConsommables();
 
--- CHECK BEFORT INSERT VENTE_CONSOMMABLE SI IL Y A ASSEZ DE STOCK
+-- CHECK BEFORT INSERT VENTE_CONSOMMABLE SI IL Y A ASSEZ DE STOCK TESTER
 
 CREATE OR REPLACE FUNCTION checkOnInsertCanSoldConsommables() RETURNS trigger AS
 $trigger_checkOnInsertCanSoldConsommables$
@@ -353,23 +354,24 @@ CREATE TRIGGER trigger_checkOnInsertCanSoldConsommables
     FOR EACH ROW
 EXECUTE PROCEDURE checkOnInsertCanSoldConsommables();
 
--- UPDATE PRIX_TOTAL AFTER INSERT VENTE_CONSOMMABLE
+-- UPDATE PRIX_TOTAL AFTER INSERT VENTE_CONSOMMABLE TESTER
 
-CREATE OR REPLACE FUNCTION checkOnInsertCanSoldConsommables() RETURNS trigger AS
-$trigger_checkBeforInsertVENTE_CONSOMMABLES$
+CREATE OR REPLACE FUNCTION checkAfterInsertVENTE_CONSOMMABLES() RETURNS trigger AS
+$checkAfterInsertVENTE_CONSOMMABLES$
 BEGIN
     UPDATE VENTE SET prix_total=calculateSold(NEW.uuidVente) WHERE VENTE.uuidVente=NEW.uuidVente;
+    UPDATE CONSOMMABLES SET qte= qte - (SELECT qte FROM VENTE_CONSOMMABLES vc WHERE vc.uuidVente = NEW.uuidVente AND vc.uuidConsommables = NEW.uuidConsommables) WHERE uuidConsommables = NEW.uuidConsommables;
     RETURN NEW;
 END;
-$trigger_checkBeforInsertVENTE_CONSOMMABLES$ LANGUAGE  plpgsql;
+$checkAfterInsertVENTE_CONSOMMABLES$ LANGUAGE  plpgsql;
 
 CREATE TRIGGER trigger_checkBeforInsertVENTE_CONSOMMABLES
     AFTER INSERT
     ON VENTE_CONSOMMABLES
     FOR EACH ROW
-EXECUTE PROCEDURE checkOnInsertCanSoldConsommables();
+EXECUTE PROCEDURE checkAfterInsertVENTE_CONSOMMABLES();
 
--- Change le IsDisponible des jeux lors des changement sur les enprunts
+-- Change le IsDisponible des jeux lors des changement sur les enprunts TESTER
 
 CREATE OR REPLACE FUNCTION updateJeuDispo() RETURNS trigger AS
 $$
@@ -432,7 +434,7 @@ INSERT INTO VENTE(uuidVente, uuidAdherent, prix_total, date_creation, date_modif
 INSERT INTO VENTE(uuidVente, uuidAdherent, prix_total, date_creation, date_modification) VALUES ('2','1',0,'2020-11-19','2020-11-19');
 
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','1','3');
-INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','2','1');
+INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','2','3');
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('2','3','4');
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','3','4');
 
