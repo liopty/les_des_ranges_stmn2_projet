@@ -32,7 +32,7 @@ $(document).ready(function () {
 
     /* ADHERENTS */
     if (document.getElementById("adherentPage")) {
-//ouverture formulaire nouvel adherent
+    //ouverture formulaire nouvel adherent
         $('#openNewAdherentForm').click(function () {
             //permet de savoir que c'est un nouvel adherent et non un update
             $("#formAdherentAction").val("new");
@@ -146,7 +146,103 @@ $(document).ready(function () {
 
 
 
-    /* */
+    /* Jeux */
+    /* ADHERENTS */
+    if (document.getElementById("jeuPage")) {
+
+        //ouverture formulaire nouveau jeu
+        $('#openNewJeuForm').click(function () {
+            //permet de savoir que c'est un nouveau jeu et non un update
+            $("#formJeuAction").val("new");
+
+            //on reset la modale
+            $("#form_jeu").find("input[type=text],input[type=email],input[type=date],textarea").val('');
+
+            //on change le titre de la modale
+            $("#modalJeuTitle").html("Nouveau jeu");
+        });
+
+
+        //table adherents
+        let jeuTable =$('#jeuxTable').DataTable({
+            //"scrollX": true,
+            "order": [[0, "asc"]],
+            "aaSorting": [],
+            columnDefs: [{
+                orderable: false,
+                targets: [7]
+            }],
+            "lengthMenu": [25, 50, 100],
+            "language": {
+                "decimal": "",
+                "emptyTable": "Aucun élément dans la table",
+                "info": "Page _PAGE_ sur _PAGES_",
+                "infoEmpty": "Aucun élément à afficher",
+                "infoFiltered": "",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "_MENU_ résultats par page",
+                "loadingRecords": "Chargement...",
+                "processing": "En cours...",
+                "search": "Recherche:",
+                "zeroRecords": "Aucun résultat",
+                "paginate": {
+                    "first": "Première",
+                    "last": "dernière",
+                    "next": "Suivant",
+                    "previous": "Précédent"
+                },
+                "aria": {
+                    "sortAscending": ": activer pour trier la colonne dans l'ordre croissant",
+                    "sortDescending": ": activer pour trier la colonne dans l'ordre décroissant"
+
+                }
+            }
+        });
+
+
+        $('#jeuxTable').on('draw.dt', function () {
+            $('.openDeleteJeuForm').off("click");//supprime les anciens scripts si ils existent
+            $('.openEditJeuForm').off("click");
+
+            $('.openEditJeuForm').click(function (){
+                let data = $(this).data();
+                $("#formJeuAction").val("update");
+                $("#formJeuId").val(data["id_jeu"])
+
+                //on change le titre de la modale
+                $("#modalJeuTitle").html("Modification du jeu");
+
+                $("#jeuNom").val(data["nom"]);
+                $("#jeuCategorie").val(data["categorie"]);
+                $("#jeuEtat").val(data["etat"]);
+                $("#jeuDescription").val(data["description"]);
+
+                let isDispo = (data['isdisponible'] === "Oui");
+                $("#jeuIsDisponible").prop("checked", isDispo);
+
+                let date_achatTab = data["date_achat"].split("-");
+                let day = date_achatTab[0];
+                let month = date_achatTab[1];
+                let year = date_achatTab[2];
+                let date_achat = year + '-' + month + '-' + day;
+                $("#jeuDateAchat").val(date_achat);
+
+
+
+            });
+
+            $(".openDeleteJeuForm").click(function () {
+                let data = $(this).data();
+                $('#idJeu2').val(data["id_jeu"])
+            })
+
+        });
+
+        jeuTable.draw();
+
+    }
+
 
 
     //affiche spinner chargement sur les envoies de formulaire

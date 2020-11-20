@@ -6,10 +6,34 @@
         <div class="row">
             <div class="col">
                 {% include 'menu.html.twig' %}
+                <div class="row">
+                    <div class="col">
+                        <button id="openNewJeuForm" class="btn btn-primary" data-toggle="modal"
+                                data-target="#neworupdateJeuForm">Nouveau  <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
                 <br>
                 <div class="row">
                     <div class="col">
-                        <p>Jeux</p>
+                        <table class="table" id="jeuxTable">
+                            <thead>
+                            <tr>
+                                <th>Intitulé</th>
+                                <th>Code</th>
+                                <th>Catégorie</th>
+                                <th>État</th>
+                                <th>Description</th>
+                                <th>Dispo ?</th>
+                                <th>Achat</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ tbody|raw }}
+                            </tbody>
+
+                        </table>
                     </div>
                 </div>
 
@@ -20,4 +44,115 @@
 {% endblock %}
 
 {% block footer %}
+    <input type="hidden" id="jeuPage">
+    <div class="modal fade" id="neworupdateJeuForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalJeuTitle">Tmp</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form_adherent" action="{{ path('app_jeux') }}" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="jeuNom">Intitulé*</label>
+                                    <input type="text" id="jeuNom" name="nom" required="required"
+                                           maxlength="50" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="jeuCategorie" class="required">Catégorie*</label>
+                                    <select id="jeuCategorie" name="categorie" required="required"
+                                            class="form-control">
+                                        {% for cate in categories|keys %}
+                                            <option value="{{ cate }}">{{ cate }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="jeuEtat" class="required">État*</label>
+                                    <select id="jeuEtat" name="etat" required="required"
+                                            class="form-control">
+                                        {% for e in etats|keys %}
+                                            <option value="{{ e }}">{{ e }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="jeuDescription">Description</label>
+                                    <textarea class="form-control" id="jeuDescription" name="description"
+                                              maxlength="255"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="jeuDateAchat">Date d'achat</label>
+                                    <input type="date" class="form-control" name="dateachat" id="jeuDateAchat">
+                                </div>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="jeuIsDisponible" name="disponible"
+                                           class="form-check-input" value="1" checked="checked">
+                                    <label class="form-check-label" for="jeuIsDisponible">Disponible</label>
+                                </div>
+                            </div>
+                        </div>
+                        <input id="formJeuAction" type="hidden" value="" name="jeuRequestType">
+                        <input id="formJeuId" type="hidden" value="" name="idJeu">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary submitForm " data-formid="form_jeu">Enregistrer
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                                  hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="jeuFormDelete" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Supprimer un jeu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ path('app_jeux') }}" id="deleteJeuForm" method="post">
+
+                    <div class="modal-body">
+                        <p>Vous êtes sur le point de supprimer ce jeu, cette action est irréversible.</p>
+                        <input id="formJeuAction2" type="hidden" value="delete" name="jeuRequestType">
+                        <input id="idJeu2" type="hidden" value="" name="idJeu">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary submitForm"
+                                data-formid="deleteJeuForm">Confirmer <span class="spinner-border spinner-border-sm"  role="status" aria-hidden="true" hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}

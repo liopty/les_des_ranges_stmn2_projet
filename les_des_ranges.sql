@@ -22,7 +22,7 @@ CREATE DOMAIN domain_etat AS VARCHAR
     CHECK (
             VALUE ~ 'Neuf'
             OR VALUE ~ 'Très bon'
-            OR VALUE ~ 'Pon'
+            OR VALUE ~ 'Bon'
             OR VALUE ~ 'Passable'
             OR VALUE ~ 'Médiocre'
             OR VALUE ~ 'Incomplet'

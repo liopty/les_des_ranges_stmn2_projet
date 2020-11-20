@@ -5,3 +5,32 @@ li.active{
 nav {
     margin-bottom: 2em;
 }
+
+
+.rowColorCateory3_6ans{
+    background: #ffe6f2;
+}
+.rowColorCateory6_8ans{
+    background: #ffffeb;
+
+}
+.rowColorCateoryFamille{
+    background: #e3efe3;
+
+}
+.rowColorCateoryAmateur{
+    background: #ffe7e7;
+
+}
+.rowColorCateoryExpert{
+    background: #d0d0d0;
+
+}
+.rowColorCateorySolo_ou_a_2{
+    background: #ffeee7;
+
+}
+.rowColorCateoryAmbiance{
+    background: #ebf1ff;
+
+}
