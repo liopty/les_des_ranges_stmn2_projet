@@ -7,11 +7,33 @@
                 {% include 'menu.html.twig' %}
                 <br>
                 <div class="row">
-                    <div class="col">
-                      <p>Acceuil</p>
+                    <div class="col" >
+                        <h3 class="display-4 text-center">Bienvenue !</h3>
+                        <br/>
+                        <p class="text-center " > Vous pourrez dans cette application manager les adhertens,jeux,consommables et vous pourrez également réaliser des emprunts ainsi que des achats de consommables.</p>
                     </div>
                 </div>
-
+                <br/>
+                <br/>
+                <div class="row">
+                    <div class="col" >
+                        <h3 class="display-4 text-center">Les jeux les plus populaires</h3>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                <table class="table table-striped center" id="TopEmpruntTable">
+                    <thead>
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Nombre d'emprunt</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ tbody|raw }}
+                    </tbody>
+                </table>
+                </div>
             </div>
         </div>
     </div>

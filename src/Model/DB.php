@@ -21,6 +21,7 @@ class DB
 
     private static $bddStructure = [
         "adherent" => ["uuidAdherent", "nom", "prenom", "date_naissance", "mail", "date_premiere_cotisation", "date_derniere_cotisation", "telephone", "type_adhesion", "personnes_rattachees", "autre", "date_creation", "date_modification"],
+        "emprunt" => ["uuidEmprunt", "uuidJeux", "uuidAdherent", "date_emprunt", "date_retourprevu", "date_retour", "date_creation", "date_modification"],
     ];
 
     ////////////////////////////////////////////////////////////////////////////
@@ -187,6 +188,21 @@ class DB
         } catch (PDOException $erreur) {
             //return null;
             return "Erreur " . $erreur->getMessage();
+        }
+    }
+
+    //---------------------EMPRUNT-----------------------------------------
+    public static function GetTopEmprunt($nbTop)
+    {
+         try {
+                $req = DB::getInstance()->prepare("SELECT topJeuxEmpruntes(?);");
+                $req->bindParam( 1, $nbTop);
+                $req->execute();
+                return $req->fetchAll();
+         }
+         catch (PDOException $erreur) {
+            //return null;
+             return "Erreur dans la requette GetTopEmprunt" . $erreur->getMessage();
         }
     }
 
