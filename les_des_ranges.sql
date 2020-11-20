@@ -181,6 +181,7 @@ BEGIN
     IF NEW.date_modification IS NULL THEN
         RAISE EXCEPTION 'date_modification ne peut pas être NULL';
     END IF;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -216,7 +217,7 @@ BEGIN
     IF NEW.date_modification IS NULL THEN
         RAISE EXCEPTION 'date_modification ne peut pas être NULL';
     END IF;
-
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -252,7 +253,7 @@ BEGIN
     IF NEW.date_modification IS NULL THEN
         RAISE EXCEPTION 'date_modification ne peut pas être NULL';
     END IF;
-
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -276,7 +277,7 @@ BEGIN
     IF NEW.date_modification IS NULL THEN
         RAISE EXCEPTION 'date_modification ne peut pas être NULL';
     END IF;
-
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -286,7 +287,7 @@ CREATE TRIGGER trigger_checkInsertOrUpdateVente
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateVente();
 
----
+--- BEFORE INSERT / UPDATE Consommables check contraintes d'integrite
 
 CREATE OR REPLACE FUNCTION checkInsertOrUpdateConsommables() RETURNS trigger AS
 $$
@@ -306,7 +307,7 @@ BEGIN
     IF NEW.date_modification IS NULL THEN
         RAISE EXCEPTION 'date_modification ne peut pas être NULL';
     END IF;
-
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -316,7 +317,7 @@ CREATE TRIGGER trigger_checkInsertOrUpdateConsommables
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateConsommables();
 
----
+--- CHECK BEFORE INSERT / UPDATE VENTE_CONSOMMABLES -> qte > 0
 
 CREATE OR REPLACE FUNCTION checkInsertOrUpdateVenteConsommables() RETURNS trigger AS
 $$
@@ -324,6 +325,7 @@ BEGIN
     IF (NEW.qte IS NULL) OR (NEW.qte < 0) THEN
         RAISE EXCEPTION 'qte ne peut pas être NULL et doit être >= 0';
     END IF;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -333,8 +335,84 @@ CREATE TRIGGER trigger_checkInsertOrUpdateVenteConsommables
     FOR EACH ROW
 EXECUTE PROCEDURE checkInsertOrUpdateVenteConsommables();
 
---
+-- CHECK BEFORT INSERT VENTE_CONSOMMABLE SI IL Y A ASSEZ DE STOCK
 
+CREATE OR REPLACE FUNCTION checkOnInsertCanSoldConsommables() RETURNS trigger AS
+$trigger_checkOnInsertCanSoldConsommables$
+    BEGIN
+        IF (canSold(NEW.uuidVente) <> TRUE ) THEN
+            RAISE EXCEPTION 'Stock non suffisant pour efectuer cette commande !';
+        END IF;
+        RETURN NEW;
+    END;
+$trigger_checkOnInsertCanSoldConsommables$ LANGUAGE  plpgsql;
+
+CREATE TRIGGER trigger_checkOnInsertCanSoldConsommables
+    BEFORE INSERT
+    ON VENTE_CONSOMMABLES
+    FOR EACH ROW
+EXECUTE PROCEDURE checkOnInsertCanSoldConsommables();
+
+-- UPDATE PRIX_TOTAL AFTER INSERT VENTE_CONSOMMABLE
+
+CREATE OR REPLACE FUNCTION checkOnInsertCanSoldConsommables() RETURNS trigger AS
+$trigger_checkBeforInsertVENTE_CONSOMMABLES$
+BEGIN
+    UPDATE VENTE SET prix_total=calculateSold(NEW.uuidVente) WHERE VENTE.uuidVente=NEW.uuidVente;
+    RETURN NEW;
+END;
+$trigger_checkBeforInsertVENTE_CONSOMMABLES$ LANGUAGE  plpgsql;
+
+CREATE TRIGGER trigger_checkBeforInsertVENTE_CONSOMMABLES
+    AFTER INSERT
+    ON VENTE_CONSOMMABLES
+    FOR EACH ROW
+EXECUTE PROCEDURE checkOnInsertCanSoldConsommables();
+
+-- Change le IsDisponible des jeux lors des changement sur les enprunts
+
+CREATE OR REPLACE FUNCTION updateJeuDispo() RETURNS trigger AS
+$$
+    DECLARE requestType VARCHAR ;
+BEGIN
+    requestType = TG_ARGV[0];
+    IF requestType = 'insert' THEN
+        UPDATE JEUX j SET isDisponible = false WHERE NEW.uuidJeux = j.uuidJeux;
+    END IF;
+    IF (requestType = 'update') THEN
+        IF (NEW.date_retour IS NOT NULL) AND (OLD.date_retour IS NULL) THEN
+            UPDATE JEUX j SET isDisponible = true WHERE OLD.uuidJeux = j.uuidJeux;
+        ELSIF (NEW.date_retour IS NULL) AND (OLD.uuidJeux <> NEW.uuidJeux) THEN
+            UPDATE JEUX j SET isDisponible = true WHERE OLD.uuidJeux = j.uuidJeux;
+            UPDATE JEUX j SET isDisponible = false WHERE NEW.uuidJeux = j.uuidJeux;
+        END IF;
+    END IF;
+    IF requestType = 'delete' THEN
+        UPDATE JEUX j SET isDisponible = true WHERE OLD.uuidJeux = j.uuidJeux;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_insert_updateJeuDispo
+    AFTER INSERT
+    ON EMPRUNT
+    FOR EACH ROW
+EXECUTE PROCEDURE updateJeuDispo('insert');
+
+CREATE TRIGGER trigger_update_updateJeuDispo
+    AFTER UPDATE
+    ON EMPRUNT
+    FOR EACH ROW
+EXECUTE PROCEDURE updateJeuDispo('update');
+
+CREATE TRIGGER trigger_delete_updateJeuDispo
+    AFTER DELETE
+    ON EMPRUNT
+    FOR EACH ROW
+EXECUTE PROCEDURE updateJeuDispo('delete');
+
+--
 --------------------------------JEUX DE TEST--------------------------------------------------
 INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('1','coca',1.5,10,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
 INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('2','chips',1.0,30,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
@@ -355,16 +433,18 @@ INSERT INTO VENTE(uuidVente, uuidAdherent, prix_total, date_creation, date_modif
 
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','1','3');
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','2','1');
-
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('2','3','4');
+INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','3','4');
 
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('1','1','3','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('2','1','3','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('3','2','1','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('4','2','5','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('5','3','3','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('6','3','5','2019-11-19','2019-11-22','2019-11-22','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
 
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('1','1','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('2','1','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('3','2','1','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('4','2','5','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('5','3','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('6','3','5','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+
+UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE 1;
 -- select calculateSold(Cast(1 as VarChar)); RETURN 5.5
 -- select canSold(Cast(1 as VarChar)); RETURN TRUE
 -- select canSold(Cast(2 as VarChar)); RETURN FALSE
