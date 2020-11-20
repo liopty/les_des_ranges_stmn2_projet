@@ -449,9 +449,7 @@ INSERT INTO VENTE(uuidVente, uuidAdherent, prix_total, date_creation, date_modif
 
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','1','3');
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','2','3');
-INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('2','3','4');
-INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','3','4');
-
+INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('2','3','2');
 
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('1','1','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('2','1','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
@@ -460,7 +458,7 @@ INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_ret
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('5','3','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('6','3','5','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
 
-UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE 1;
+UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
 -- select calculateSold(Cast(1 as VarChar)); RETURN 5.5
 -- select canSold(Cast(1 as VarChar)); RETURN TRUE
 -- select canSold(Cast(2 as VarChar)); RETURN FALSE
