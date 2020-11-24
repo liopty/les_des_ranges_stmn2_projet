@@ -20,6 +20,8 @@ class JeuxPageController extends AbstractController
      */
     public function jeux(Request $req)
     {
+        $error = $req->query->get("error");
+
         if ($req->request->get('jeuRequestType') !== null) {
             $data = $req->request;
             switch ($data->get('jeuRequestType')) {
@@ -47,9 +49,9 @@ class JeuxPageController extends AbstractController
                         "date_creation" => $date_creation->format("Y-m-d h:i:s"),
                         "date_modification" => $date_modification->format("Y-m-d h:i:s")
                     ];
-                    JeuxDAO::insert($val);
+                    $error = JeuxDAO::insert($val);
+                    return $this->redirectToRoute("app_jeux", ["error"=>$error]);
 
-                    return $this->redirectToRoute("app_jeux");
                 case "update":
 
                     $id = ($data->get('idJeu') === null) ? "" : $data->get('idJeu');
@@ -74,25 +76,24 @@ class JeuxPageController extends AbstractController
                     $idTab = [
                         "uuidJeux" => $id
                     ];
-                    JeuxDAO::update($val, $idTab);
+                    $error = JeuxDAO::update($val, $idTab);
 
-
-                    return $this->redirectToRoute("app_jeux");
+                    return $this->redirectToRoute("app_jeux", ["error"=>$error]);
                 case "delete":
                     $id = ($data->get('idJeu') === null) ? "" : $data->get('idJeu');
                     $param = [
                         "uuidJeux" => $id
                     ];
-                    JeuxDAO::delete($param);
+                    $error = JeuxDAO::delete($param);
 
-                    return $this->redirectToRoute("app_jeux");
+                    return $this->redirectToRoute("app_jeux", ["error"=>$error]);
                 default:
                     break;
             }
         }
 
 
-        $jeux = JeuxDAO::findAll("jeux");
+        $jeux = JeuxDAO::findAll();
         $allCategories = JeuxDAO::$categories;
         $allEtats = JeuxDAO::$etats;
 
@@ -147,7 +148,8 @@ class JeuxPageController extends AbstractController
             "current_menu" => "Jeux",
             "tbody" => $tbody,
             "categories" => $allCategories,
-            "etats" => $allEtats
+            "etats" => $allEtats,
+            "error" => $error
         ]);
     }
 

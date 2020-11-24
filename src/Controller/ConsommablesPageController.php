@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Model\AdherentDAO;
 use App\Model\ConsommablesDAO;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,7 @@ class ConsommablesPageController extends AbstractController
     public function stocks(Request $req)
     {
 
+        $error = $req->query->get("error");
         if ($req->request->get('consoRequestType') !== null) {
             $data = $req->request;
             switch ($data->get('consoRequestType')) {
@@ -40,9 +42,9 @@ class ConsommablesPageController extends AbstractController
                         "date_creation" => $date_creation->format("Y-m-d h:i:s"),
                         "date_modification" => $date_modification->format("Y-m-d h:i:s")
                     ];
-                    ConsommablesDAO::insert($val);
+                    $error = ConsommablesDAO::insert($val);
 
-                    return $this->redirectToRoute("app_stocks");
+                    return $this->redirectToRoute("app_stocks", ["error"=>$error]);
                 case "update":
                     $uuid = ($data->get('uuidConsommables') === null) ? "" : $data->get('uuidConsommables');
                     $label = ($data->get('label') === null) ? "" : $data->get('label');
@@ -52,35 +54,33 @@ class ConsommablesPageController extends AbstractController
                     $date_modification = new DateTime('now');
 
                     $val = [
-                        "nom" => $label,
-                        "prenom" => $prix_unitaire,
-                        "date_naissance" => $qte,
-                        "mail" => $date_creation,
+                        "label" => $label,
+                        "prix_unitaire" => $prix_unitaire,
+                        "qte" => $qte,
                         "date_modification" => $date_modification->format("Y-m-d h:i:s")
                     ];
 
                     $idTab = [
                         "uuidConsommables" => $uuid
                     ];
-                    ConsommablesDAO::update($val, $idTab);
+                    $error = ConsommablesDAO::update($val, $idTab);
 
-                    return $this->redirectToRoute("app_stocks");
+                    return $this->redirectToRoute("app_stocks", ["error"=>$error]);
                 case "delete":
                     $id = ($data->get('uuidConsommables') === null) ? "" : $data->get('uuidConsommables');
                     $param = [
                         "uuidConsommables" => $id
                     ];
-                    ConsommablesDAO::delete($param);
+                    $error = ConsommablesDAO::delete($param);
 
-                    return $this->redirectToRoute("app_stocks");
+                    return $this->redirectToRoute("app_stocks", ["error"=>$error]);
                 default:
                     break;
             }
         }
 
-        $consommables = ConsommablesDAO::findAll("consommables");
+        $consommables = ConsommablesDAO::findAll();
         $tbody = "";
-        $debug = $consommables;
         if ($consommables != null) {
             foreach ($consommables as $c) {
                 $uuidConsommables = $c['uuidconsommables'];
@@ -90,19 +90,20 @@ class ConsommablesPageController extends AbstractController
 
                 $tbody .= "<tr>"
                     . "<td>$label</td>"
-                    . "<td>$prix_unitaire</td>"
+                    . "<td>".$prix_unitaire." €</td>"
                     . "<td>$qte</td>"
                     . "<td>"
                         . '<button class="btn btn-secondary btn-sm openEditConsommablesForm"
                                  data-toggle="modal" data-target="#neworupdateconsommablesForm"
                                  data-label="' . $label . '"
                                  data-prix_unitaire="' . $prix_unitaire . '"
-                                 data-qte="' . $qte . '">
+                                 data-qte="' . $qte . '"
+                                 data-id_consommable="' . $uuidConsommables . '">
                               <i class="fas fa-cog"></i>
                            </button>'
                  .'   <button class="btn btn-danger btn-sm openDeleteConsommablesForm"
                             data-toggle="modal" data-target="#ConsommablesFormDelete"
-                            data-id_adherent="' . $uuidConsommables . '">
+                            data-id_consommable="' . $uuidConsommables . '">
                           <i class="fas fa-trash-alt"></i>
                        </button>'
                     . "</td>"
@@ -114,7 +115,7 @@ class ConsommablesPageController extends AbstractController
         return $this->render('stocks.html.twig', [
             "current_menu" => "Stocks",
             "tbody" => $tbody,
-            "debug" => $debug,
+            "error" => $error
         ]);
     }
 }

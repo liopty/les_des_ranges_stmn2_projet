@@ -6,11 +6,35 @@
         <div class="row">
             <div class="col">
                 {% include 'menu.html.twig' %}
-                <br>
-                <div class="row">
+                <div class="row " id="errormsgContainer" hidden>
                     <div class="col">
-                        <p>Ventes</p>
+                        <p id="errormsg" class="alert alert-danger">{{ error }}</p>
                     </div>
+                </div>
+                <div class="d-flex">
+                    <div class="form-group col-2">
+                        <label for="openNewVenteForm"> </label>
+                        <button id="openNewVenteForm" class="btn btn-primary form-control" data-toggle="modal"
+                                data-target="#newVenteForm">Nouveau  <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <br>
+                <div class="d-flex ">
+                        <table class="table table-striped w-auto" id="ventesTable">
+                            <thead>
+                            <tr>
+                                <th class="th-lg">Date</th>
+                                <th class="th-lg">Adhérent</th>
+                                <th class="th-lg">Montant</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ tbody|raw }}
+                            </tbody>
+
+                        </table>
                 </div>
 
             </div>
@@ -20,4 +44,97 @@
 {% endblock %}
 
 {% block footer %}
+    <!-- NEW -->
+    <input type="hidden" id="ventePage">
+    <div class="modal fade" id="newVenteForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalVenteTitle">Tmp</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form_vente" action="{{ path('app_ventes') }}" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="vente_adherent">Adhérent*</label>
+                            <div class="input-group">
+                                <select id="vente_adherent" class="form-control " name="uuidAdherent"
+                                        required="required">
+                                    <option value="">Cliquez pour selectionner un adhérent</option>
+                                    {% for a in adherents %}
+                                        <option value="{{ a["uuidadherent"] }}">{{ a["uuidadherent"] }} - {{ a["nom"] }}
+                                             {{ a["prenom"] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                        </div>
+                        <div id="produitsContainer">
+                            <div id="produitselect0" class="row produitselect islast">
+                                <div class="col">
+                                    <div class="form-group ">
+                                        <label class="labelproduit" for="vente_produit0">Produit*</label>
+                                        <div class="input-group">
+                                            <select id="vente_produit0" class="form-control selectProduit"
+                                                    name="produit0" required="required">
+                                                <option value="">Cliquez pour selectionner un produit</option>
+                                                {% for p in produits %}
+                                                    <option value="{{ p["uuidconsommables"] }}">{{ p["label"] }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="labelquantite" for="vente_quantite0">Quantité*</label>
+                                        <input type="number" id="vente_quantite0" name="quantite0" required="required"
+                                               min="0" class="form-control vente_quantite">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <button type="button" id="addProduitbtn" class="btn btn-primary">Ajouter un produit  <i
+                                    class="fas fa-plus"></i>
+                        </button>
+
+
+                        <input id="formVentesAction" type="hidden" value="" name="venteRequestType">
+                        <input id="formVentesNbProduits" type="hidden" value="" name="ventenbprod">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary submitForm " data-formid="form_vente">
+                            Enregistrer <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                                              hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- infos -->
+    <div class="modal fade" id="infosVenteForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Détails de la vente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                    <div class="modal-body">
+                        <p id="infosventecontainer"></p>
+                       <span id="infosSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}

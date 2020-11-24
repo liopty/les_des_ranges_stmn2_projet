@@ -23,6 +23,7 @@ class AdherentPageController extends AbstractController
     public function adherents(Request $req)
     {
 
+        $error = $req->query->get("error");
 
         if ($req->request->get('adherentRequestType') !== null) {
             $data = $req->request;
@@ -58,9 +59,9 @@ class AdherentPageController extends AbstractController
                         "date_creation" => $date_creation->format("Y-m-d h:i:s"),
                         "date_modification" => $date_modification->format("Y-m-d h:i:s")
                     ];
-                    AdherentDAO::insert($val);
+                    $error = AdherentDAO::insert($val);
 
-                    return $this->redirectToRoute("app_adherents");
+                    return $this->redirectToRoute("app_adherents", ["error"=>$error]);
                 case "update":
                     $id = ($data->get('idAdherent') === null) ? "" : $data->get('idAdherent');
                     $nom = ($data->get('nom') === null) ? "" : $data->get('nom');
@@ -93,25 +94,25 @@ class AdherentPageController extends AbstractController
                     $idTab = [
                         "uuidAdherent" => $id
                     ];
-                    AdherentDAO::update($val, $idTab);
+                    $error = AdherentDAO::update($val, $idTab);
 
 
-                    return $this->redirectToRoute("app_adherents");
+                    return $this->redirectToRoute("app_adherents", ["error"=>$error]);
                 case "delete":
                     $id = ($data->get('idAdherent') === null) ? "" : $data->get('idAdherent');
                     $param = [
                         "uuidAdherent" => $id
                     ];
-                    AdherentDAO::delete($param);
+                    $error = AdherentDAO::delete($param);
 
-                    return $this->redirectToRoute("app_adherents");
+                    return $this->redirectToRoute("app_adherents", ["error"=>$error]);
                 default:
                     break;
             }
         }
 
 
-        $adherents = AdherentDAO::findAll("adherent");
+        $adherents = AdherentDAO::findAll();
         $tbody = "";
         if ($adherents != null) {
             foreach ($adherents as $a) {
@@ -168,7 +169,8 @@ class AdherentPageController extends AbstractController
 
         return $this->render('adherents.html.twig', [
             "current_menu" => "Adherents",
-            "tbody" => $tbody
+            "tbody" => $tbody,
+            "error" => $error
         ]);
     }
 

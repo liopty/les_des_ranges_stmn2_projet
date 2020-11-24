@@ -6,10 +6,47 @@
         <div class="row">
             <div class="col">
                 {% include 'menu.html.twig' %}
+                <div class="row " id="errormsgContainer" hidden>
+                    <div class="col">
+                        <p id="errormsg" class="alert alert-danger">{{ error }}</p>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="form-group col-3">
+                        <label for="affichage_emprunts">Afficher les emprunts</label>
+                        <select id="affichage_emprunts" class="form-control">
+                            <option value="all">Tous</option>
+                            <option value="encours">En cours</option>
+                            <option value="archives">Archivés</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-2">
+                        <label for="openNewEmpruntForm"> </label>
+                        <button id="openNewEmpruntForm" class="btn btn-primary form-control" data-toggle="modal"
+                                data-target="#neworupdateempruntForm">Nouveau  <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <br>
                 <div class="row">
                     <div class="col">
-                        <p>Emprunts</p>
+                        <table class="table" id="empruntsTable">
+                            <thead>
+                            <tr>
+                                <th>Adhérent</th>
+                                <th>Jeu</th>
+                                <th>Date d'emprunt</th>
+                                <th>Date de retour prévu</th>
+                                <th class="toHideEncours" hidden>Date de retour</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ tbody|raw }}
+                            </tbody>
+
+                        </table>
                     </div>
                 </div>
 
@@ -20,4 +57,136 @@
 {% endblock %}
 
 {% block footer %}
+    <input type="hidden" id="empruntPage">
+    <div class="modal fade" id="neworupdateempruntForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEmpruntTitle">Tmp</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form_emprunt" action="{{ path('app_emprunts') }}" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="emprunt_adherent">Adhérent*</label>
+                            <div class="input-group">
+                                <select id="emprunt_adherent" class="form-control " name="uuidAdherent" required="required">
+                                    <option value="">Cliquez pour selectionner un adhérent</option>
+                                {% for a in adherents %}
+                                    <option value="{{ a["uuidadherent"] }}">{{ a["uuidadherent"] }} - {{ a["nom"] }} {{ a["prenom"] }}</option>
+                                {% endfor %}
+                            </select>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="emprunt_jeu">Jeu*</label>
+                            <div class="input-group">
+                                <select id="emprunt_jeu" name="uuidJeu" class="form-control " required="required">
+                                    <option value="">Cliquez pour selectionner un jeu</option>
+                                    {% for j in jeux %}
+                                        <option value="{{ j["uuidjeux"] }}">{{ j["uuidjeux"] }} - {{ j["nom"] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="emprunt_dateemprunt">Date de l'emprunt*</label>
+                                    <input type="date" class="form-control" name="date_emprunt" id="emprunt_dateemprunt" required>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="emprunt_dateretourprevu">Date de retour*</label>
+                                    <input type="date" class="form-control" name="date_retourprevu" id="emprunt_dateretourprevu" required>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <input id="formEmpruntsAction" type="hidden" value="" name="empruntRequestType">
+                        <input id="formEmpruntId" type="hidden" value="" name="uuidEmprunt">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary submitForm " data-formid="form_emprunt">Enregistrer <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="empruntFormDelete" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Supprimer un emprunt</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ path('app_emprunts') }}" id="deleteEmpruntForm" method="post">
+
+                    <div class="modal-body">
+                        <p>Vous êtes sur le point de supprimer cet emprunt, cette action est irréversible.</p>
+                        <input id="formEmpruntAction2" type="hidden" value="delete" name="empruntRequestType">
+                        <input id="formEmpruntId2" type="hidden" value="" name="uuidEmprunt">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary submitForm"
+                                data-formid="deleteEmpruntForm">Confirmer <span class="spinner-border spinner-border-sm"  role="status" aria-hidden="true" hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="empruntFormRendre" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Rendre un jeu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ path('app_emprunts') }}" id="rendreEmpruntForm" method="post">
+
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="emprunt_dateretour">Date de retour*</label>
+                                    <input type="date" class="form-control" name="date_retour" id="emprunt_dateretour" required>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <input id="formEmpruntAction3" type="hidden" value="rendre" name="empruntRequestType">
+                        <input id="formEmpruntId3" type="hidden" value="" name="uuidEmprunt">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary submitForm"
+                                data-formid="rendreEmpruntForm">Confirmer <span class="spinner-border spinner-border-sm"  role="status" aria-hidden="true" hidden="hidden"></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
 {% endblock %}

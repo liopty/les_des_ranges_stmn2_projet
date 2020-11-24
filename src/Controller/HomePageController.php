@@ -16,7 +16,8 @@ class HomePageController extends AbstractController
      */
     public function accueil()
     {
-        $TopEmprunt = EmpruntDAO::GetTopEmprunt(4);
+        $nbtop = 5;
+        $TopEmprunt = EmpruntDAO::GetTopEmprunt($nbtop);
 
         $tbody = "";
         if ($TopEmprunt != null) {
@@ -28,19 +29,20 @@ class HomePageController extends AbstractController
                 $endDatas= $endDatas[sizeof($endDatas)-1];
                 $nb_emprunt =  str_replace(',', "", $endDatas);
 
-                $tbody .= "<tr>"
-                    . "<td scope='row'>$nom</td>"
-                    . "<td scope='row'>$nb_emprunt</td>"
+                $tbody .= "<tr class=''>"
+                    . "<td class=''>$nom</td>"
+                    . "<td class='text-center'>$nb_emprunt</td>"
                     . "</tr>";
             }
         }
         else{
-            $tbody .="<p>Aucun Jeu emprunte :( </p>";
+            $tbody .="<p>Aucun jeux n'a encore été empruntés :( </p>";
         }
 
         return $this->render('homepage.html.twig', [
             "current_menu" => "Accueil",
             "tbody" => $tbody,
+            "nbtop" => $nbtop
         ]);
     }
 

@@ -18,7 +18,7 @@ nav {
     background: #e3efe3;
 
 }
-.rowColorCateoryAmateur{
+.rowColorCateoryAmateur, .empruntRetard{
     background: #ffe7e7;
 
 }
@@ -33,4 +33,16 @@ nav {
 .rowColorCateoryAmbiance{
     background: #ebf1ff;
 
+}
+
+tbody tr td {
+    padding: 0.4rem 1rem !important;
+}
+
+.th-lg{
+    min-width: 12rem !important;
+}
+
+.select2-container{
+    width: 100% !important;
 }

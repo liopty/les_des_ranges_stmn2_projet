@@ -24,6 +24,8 @@ class DB
         "emprunt" => ["uuidEmprunt", "uuidJeux", "uuidAdherent", "date_emprunt", "date_retourprevu", "date_retour", "date_creation", "date_modification"],
         "jeux" => ["uuidJeux","nom","code","categorie","etat","description","isDisponible","date_achat","date_creation","date_modification"],
         "consommables" => ["uuidConsommables","label","prix_unitaire","qte","date_creation","date_modification"],
+        "vente" => ["uuidVente","uuidAdherent","prix_total","date_creation","date_modification"],
+        "vente_consommables" => ["uuidVente", "uuidConsommables","qte"],
     ];
 
     ////////////////////////////////////////////////////////////////////////////
@@ -41,11 +43,18 @@ class DB
         return self::$instance;
     }
 
-    public static function findAll($table = "error", $orderby = "uuid ASC")
+    /**
+     * @param string $table
+     * @param string $orderby
+     * @return array|null
+     */
+    public static function findAll($table = "error", $orderby = "default")
     {
         $table = strtolower($table);
 
         if (!array_key_exists($table, DB::$bddStructure)) return null;
+        if ($orderby = "default") $orderby = $table.".".DB::$bddStructure[$table][0]." DESC";
+
 
         $req = DB::getInstance()->prepare("SELECT * FROM " . $table . " ORDER BY :orderby ;");
         try {
@@ -55,8 +64,8 @@ class DB
             $res = $req->fetchAll();
             return $res;
         } catch (PDOException $erreur) {
-            return null;
-            //DEBUG return "Erreur " . $erreur->getMessage();
+            //return null;
+            return "Erreur " . $erreur->getMessage();
         }
     }
 
@@ -98,8 +107,7 @@ class DB
             return null;
 
         } catch (PDOException $erreur) {
-            return null;
-            //DEBUG return "Erreur " . $erreur->getMessage();
+             return "Erreur " . $erreur->getMessage();
         }
     }
 
@@ -193,7 +201,6 @@ class DB
         }
     }
 
-    //---------------------EMPRUNT-----------------------------------------
     public static function GetTopEmprunt($nbTop)
     {
          try {
@@ -212,4 +219,14 @@ class DB
     {
         self::$instance = null;
     }
+
+    /**
+     * @return \string[][]
+     */
+    protected static function getBddStructure(): array
+    {
+        return self::$bddStructure;
+    }
+
+
 }

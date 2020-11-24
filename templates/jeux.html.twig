@@ -6,6 +6,11 @@
         <div class="row">
             <div class="col">
                 {% include 'menu.html.twig' %}
+                <div class="row " id="errormsgContainer" hidden>
+                    <div class="col">
+                        <p id="errormsg" class="alert alert-danger">{{ error }}</p>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col">
                         <button id="openNewJeuForm" class="btn btn-primary" data-toggle="modal"

@@ -182,6 +182,9 @@ BEGIN
     IF NEW.date_modification IS NULL THEN
         RAISE EXCEPTION 'date_modification ne peut pas être NULL';
     END IF;
+    IF ((SELECT isDisponible FROM JEUX WHERE JEUX.uuidJeux=NEW.uuidJeux) <> TRUE) AND (OLD IS NUll OR OLD.uuidJeux <> NEW.uuidJeux) THEN
+        RAISE EXCEPTION 'Le jeu n est pas disponible';
+    end if;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -314,7 +317,7 @@ BEGIN
         RAISE EXCEPTION 'prix_unitaire ne peut pas être NULL et doit être >= 0';
     END IF;
     IF (NEW.qte IS NULL) OR (NEW.qte < 0) THEN
-        RAISE EXCEPTION 'qte ne peut pas être NULL et doit être >= 0';
+        RAISE EXCEPTION 'qte ne peut pas être NULL et doit être >= 0 Cette erreur peut s afficher si le Stock n est pas suffisant pour creer la vente';
     END IF;
     IF NEW.date_creation IS NULL THEN
         RAISE EXCEPTION 'date_creation ne peut pas être NULL';
@@ -356,7 +359,7 @@ CREATE OR REPLACE FUNCTION checkOnInsertCanSoldConsommables() RETURNS trigger AS
 $trigger_checkOnInsertCanSoldConsommables$
     BEGIN
         IF (canSold(NEW.uuidVente) <> TRUE ) THEN
-            RAISE EXCEPTION 'Stock non suffisant pour efectuer cette commande !';
+            RAISE EXCEPTION 'Stock non suffisant pour effectuer cette commande !';
         END IF;
         RETURN NEW;
     END;
