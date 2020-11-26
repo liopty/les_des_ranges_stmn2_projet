@@ -455,10 +455,15 @@ INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','2'
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('2','3','2');
 
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('1','1','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('2','1','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('3','2','1','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('4','2','5','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('5','3','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
 INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('6','3','5','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
 
 UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
