@@ -428,27 +428,38 @@ $(document).ready(function () {
 
         });
 
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                let retour = $("#affichage_emprunts").val();
+                let colretour = data[4] || "";
+
+                return (retour === "all")
+                    || (retour === "encours" && colretour === "")
+                    || (retour === "archives" && colretour !== "");
+            }
+        );
+
         $("#affichage_emprunts").change(function () {
+            empruntTable.draw();
+
             let val = $(this).val();
             switch (val) {
                 case "all":
-                    $("tbody tr").removeAttr("hidden");
                     $(".toHideEncours").removeAttr("hidden");
                     break;
                 case "encours":
-                    $("tbody tr").removeAttr("hidden");
                     $(".toHideEncours").attr("hidden", "hidden");
                     break;
                 case "archives":
-                    $("tbody tr").attr("hidden", "hidden");
                     $(".toHideEncours").removeAttr("hidden");
                     break;
                 default:
                     break;
             }
 
-            empruntTable.draw();
         });
+
 
         $("#affichage_emprunts").val("encours").change();
 
@@ -482,7 +493,7 @@ $(document).ready(function () {
         //table adherents
         let venteTable = $('#ventesTable').DataTable({
             //"scrollX": true,
-            "order": [[0, "asc"]],
+            "order": [[0, "desc"]],
             "aaSorting": [],
             columnDefs: [{
                 orderable: false,
@@ -572,6 +583,7 @@ $(document).ready(function () {
             $(".islast .labelquantite").attr("for", "vente_quantite" + noOfDivs);
             $(".islast .vente_quantite").attr("id", "vente_quantite" + noOfDivs);
             $(".islast .vente_quantite").attr("name", "quantite" + noOfDivs);
+            $(".islast .vente_quantite").val(0);
             $(".islast .vente_quantite").removeAttr("required");
 
 
@@ -580,6 +592,11 @@ $(document).ready(function () {
             $('#formVentesNbProduits').val(noOfDivs);
         });
 
+        $(".selectProduit").change(function (){
+            let num = $(this).attr("id").split("vente_produit")[1];
+            let stock = $(this).find('option:selected').text().split('stock: ').pop().split(')')[0];
+            if(stock >= 0) $("#vente_quantite"+num).attr("max",stock);
+        });
 
     }
 

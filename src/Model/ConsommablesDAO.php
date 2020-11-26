@@ -24,13 +24,13 @@ class ConsommablesDAO extends DB
         return parent::delete("consommables",$param);
     }
 
-    public static function getConsommablesLabelUuid(){
+    public static function getConsommablesLabelQteUuid(){
         $table = "consommables";
 
         if (!array_key_exists($table, DB::getBddStructure())) return null;
 
 
-        $req = DB::getInstance()->prepare("SELECT uuidConsommables, label FROM " . $table . " ORDER BY label ;");
+        $req = DB::getInstance()->prepare("SELECT uuidConsommables, label, qte FROM " . $table . " ORDER BY label ;");
         try {
             $req->execute();
             return  $req->fetchAll();;

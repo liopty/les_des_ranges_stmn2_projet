@@ -118,23 +118,21 @@ class EmpruntPageController extends AbstractController
                 $adherent = $uuidAdherent."-".$adherent_nom." ".$adherent_prenom;
                 $jeu = $uuidjeux."-".$jeu_nom;
 
-                $isRendu = "toHideEncours";
                 $isEncours = false;
                 if ($date_retour == null){
                     $date_retour = "";
                     $isEncours = true;
-                    $isRendu = "";
                 }
 
                 $retard = ((DateTime::createFromFormat('Y-m-d', $e['date_retourprevu']) < new DateTime('now')) && $isEncours)?"empruntRetard":"";
 
 
-                $tbody .= "<tr class='$retard $isRendu' hidden>"
+                $tbody .= "<tr class='$retard'>"
                     . "<td>$adherent</td>"
                     . "<td>$jeu</td>"
                     . "<td>$date_emprunt</td>"
                     . "<td>$date_retourprevu</td>"
-                    . "<td class='toHideEncours' hidden>$date_retour</td>"
+                    . "<td class='toHideEncours'>$date_retour</td>"
                     . "<td>";
                     if($isEncours){
                         $tbody .=       '<button class="btn btn-secondary btn-sm openEditEmpruntForm"

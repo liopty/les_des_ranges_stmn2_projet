@@ -93,7 +93,7 @@ class VentePageController extends AbstractController
         }
 
         $adherents = AdherentDAO::getAdherentNomPrenomUuid();
-        $produits = ConsommablesDAO::getConsommablesLabelUuid();
+        $produits = ConsommablesDAO::getConsommablesLabelQteUuid();
 
 
         return $this->render('ventes.html.twig', [

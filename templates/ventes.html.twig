@@ -81,7 +81,7 @@
                                                     name="produit0" required="required">
                                                 <option value="">Cliquez pour selectionner un produit</option>
                                                 {% for p in produits %}
-                                                    <option value="{{ p["uuidconsommables"] }}">{{ p["label"] }}</option>
+                                                    <option value="{{ p["uuidconsommables"] }}">{{ p["label"] }} (stock: {{ p["qte"] }})</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
