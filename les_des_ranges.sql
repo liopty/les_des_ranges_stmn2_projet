@@ -433,19 +433,22 @@ EXECUTE PROCEDURE updateJeuDispo('delete');
 
 --
 --------------------------------JEUX DE TEST--------------------------------------------------
-INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('1','coca',1.5,10,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('2','chips',1.0,30,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('3','cafe',2,3,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('1','coca',1,12,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('2','chips',1.5,30,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('3','cafe',0.5,30,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO CONSOMMABLES(uuidConsommables, label, prix_unitaire, qte, date_creation, date_modification) VALUES ('4','kitkat',1,15,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
 
 INSERT INTO ADHERENT(uuidAdherent, nom, prenom, date_naissance, mail, date_premiere_cotisation, date_derniere_cotisation, telephone, type_adhesion, personnes_rattachees, autre, date_creation, date_modification) VALUES ('1','MARCHAL','Bob','1999-06-22','bob@gmail.com','2005-06-22','2015-06-22',null,'Journée',null,null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
 INSERT INTO ADHERENT(uuidAdherent, nom, prenom, date_naissance, mail, date_premiere_cotisation, date_derniere_cotisation, telephone, type_adhesion, personnes_rattachees, autre, date_creation, date_modification) VALUES ('2','HENRIQUES','Paul','1998-06-22','paul@gmail.com','2005-06-22','2015-06-22',null,'Journée',null,null,'2017-06-22 19:10:25-07','2017-06-22 19:10:25-07');
 INSERT INTO ADHERENT(uuidAdherent, nom, prenom, date_naissance, mail, date_premiere_cotisation, date_derniere_cotisation, telephone, type_adhesion, personnes_rattachees, autre, date_creation, date_modification) VALUES ('3','NAJULI','Elina','1997-06-22','elina@gmail.com','2005-06-22','2015-06-22',null,'Journée',null,null,'2018-06-22 19:10:25-07','2018-06-22 19:10:25-07');
 
-INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('1','UNO','1','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('2','Monopoly','2','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('3','Echec','3','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('4','Les trois petits cochons','4','3-6ans','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('5','Croque carrote','5','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('1','UNO','kg94','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('2','Monopoly','kg93','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('3','Echec','kg92','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('4','Les trois petits cochons','kg91','3-6ans','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('5','Croque carrote','kg90','Famille','Incomplet','Un bon jeu',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('6','Shadow Hunters','kg98','expert','Bon','',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO JEUX(uuidJeux, nom, code, categorie, etat, description, isDisponible, date_achat, date_creation, date_modification) VALUES ('7','Twin it','kg99','Ambiance','Très bon','',true,'2000-11-19','2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
 
 INSERT INTO VENTE(uuidVente, uuidAdherent, prix_total, date_creation, date_modification) VALUES ('1','1',0,'2020-11-19','2020-11-19');
 INSERT INTO VENTE(uuidVente, uuidAdherent, prix_total, date_creation, date_modification) VALUES ('2','1',0,'2020-11-19','2020-11-19');
@@ -454,19 +457,19 @@ INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','1'
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('1','2','3');
 INSERT INTO VENTE_CONSOMMABLES(uuidVente, uuidConsommables, qte) VALUES ('2','3','2');
 
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('1','1','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('2','1','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('3','2','1','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('4','2','5','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('5','3','3','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
-UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
-INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('6','3','5','2019-11-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('1','1','3','2018-01-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2018-07-24' WHERE uuidEmprunt='1';
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('2','1','3','2018-01-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2018-11-02' WHERE uuidEmprunt='2';
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('3','2','1','2018-01-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2019-03-20' WHERE uuidEmprunt='3';
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('4','2','5','2018-01-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2019-04-01' WHERE uuidEmprunt='4';
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('5','3','2','2018-01-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2019-06-18' WHERE uuidEmprunt='5';
+INSERT INTO  EMPRUNT(uuidEmprunt, uuidAdherent, uuidJeux, date_emprunt, date_retourprevu, date_retour, date_creation, date_modification) VALUES ('6','3','4','2018-01-19','2019-11-22',null,'2016-06-22 19:10:25-07','2016-06-22 19:10:25-07');
+UPDATE EMPRUNT SET date_retour='2019-07-02' WHERE uuidEmprunt='6';
 
-UPDATE EMPRUNT SET date_retour='2019-11-24' WHERE TRUE;
 -- select calculateSold(Cast(1 as VarChar)); RETURN 5.5
 -- select canSold(Cast(1 as VarChar)); RETURN TRUE
 -- select canSold(Cast(2 as VarChar)); RETURN FALSE
